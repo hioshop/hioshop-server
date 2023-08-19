@@ -401,6 +401,7 @@ module.exports = class extends Base {
         let orderFrom = this.get('orderFrom');
         const type = this.get('type'); // 是否团购
         const addressId = this.get('addressId'); // 收货地址id
+        const addressType = this.get('addressType'); // 收货地址id
         const addType = this.get('addType');
         let goodsCount = 0; // 购物车的数量
         let goodsMoney = 0; // 购物车的总价
@@ -441,7 +442,13 @@ module.exports = class extends Base {
         }
         // 选择的收货地址
         let checkedAddress = null;
-        if (addressId == '' || addressId == 0) {
+        if(addressType == 1){ // 表示是要查询系统内置的固定地址
+            checkedAddress = await this.model('address').where({
+                id: addressId,
+                type: 1,
+				is_delete:0
+            }).find();
+        }else if (addressId == '' || addressId == 0) {
             checkedAddress = await this.model('address').where({
                 is_default: 1,
                 user_id: userId,
